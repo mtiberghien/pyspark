@@ -1,6 +1,5 @@
 from pyspark.sql import DataFrame
 from pyspark.sql.session import SparkSession
-from pyspark.ml.feature import PCA, PCAModel
 from MLPBuilder import MLPBuilder
 from PCAFeatureSelector import PCAFeatureSelector
 from Preprocessor import Preprocessor
@@ -10,7 +9,7 @@ from utils import corr_features, evaluate_model
 import seaborn as sns
 import matplotlib.pyplot as plt
 from LogisticRegressionBuilder import LogisticRegressionBuilder
-import numpy as np
+
 
 spark = (SparkSession.builder.getOrCreate())
 
@@ -23,7 +22,7 @@ def preprocess_data(dataframe: DataFrame):
 def save_correlation_matrix(dataframe: DataFrame):
     correlation_matrix = corr_features(dataframe)
     sns.heatmap(correlation_matrix)
-    plt.savefig('correlation_matrix.png')
+    plt.savefig('images/correlation_matrix.png')
     plt.show()
 
 

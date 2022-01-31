@@ -22,24 +22,24 @@ def corr_features(dataframe: DataFrame, method='pearson'):
     return Correlation.corr(dataframe, "features", method=method).head()[0].toArray()
 
 
-def write_training_time(path:str, training_time):
+def write_training_time(path: str, training_time):
     with open("{}/training_time.txt".format(path), 'w') as f:
         f.write('{:.2f}'.format(training_time))
 
 
-def read_training_time(path:str):
+def read_training_time(path: str):
     with open("{}/training_time.txt".format(path)) as f:
         result = float(f.read())
     return result
 
 
-def read_models_number(path:str):
+def read_models_number(path: str):
     with open("{}/models_number.txt".format(path)) as f:
         result = int(f.read())
     return result
 
 
-def write_models_number(path:str, models_number):
+def write_models_number(path: str, models_number):
     with open("{}/models_number.txt".format(path), 'w') as f:
         f.write(str(models_number))
 
@@ -52,7 +52,7 @@ def show_confusion_matrix(predictions: DataFrame, model_name: str):
     metrics = MulticlassMetrics(predictions.select('prediction', 'label').rdd)
     print('Accuracy for {}: {:.2f}%'.format(model_name, metrics.accuracy*100))
     sns.heatmap(metrics.confusionMatrix().toArray(), annot=True)
-    plt.savefig('{}.png'.format(model_name))
+    plt.savefig('images/{}.png'.format(model_name))
     plt.show()
 
 
@@ -64,4 +64,3 @@ def evaluate_model(df_test: DataFrame, model_builder):
     lr_predictions = model_builder.model.transform(df_test)
     show_auc(lr_predictions, model_builder.model_name)
     show_confusion_matrix(lr_predictions, model_builder.model_name)
-
