@@ -10,7 +10,7 @@ class LogisticRegressionBuilder(ModelBuilder):
         super().__init__(df_train, model_name)
 
     def load_model(self, path: str):
-        return LogisticRegressionModel.load(self.model_name)
+        return LogisticRegressionModel.load(path)
 
     def instantiate_model(self):
         return LogisticRegression(maxIter=100, regParam=0.3, elasticNetParam=0.8)
@@ -23,5 +23,5 @@ class LogisticRegressionBuilder(ModelBuilder):
 
     def show_best_params(self):
         super().show_best_params()
-        print("RegParam:{}".format(self.model.getRegParam()))
-        print("ElasticNetParam:{}".format(self.model.getElasticNetParam()))
+        print("\tRegParam:{}".format(self.model.getRegParam()))
+        print("\tElasticNetParam:{}".format(self.model.getElasticNetParam()))

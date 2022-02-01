@@ -11,7 +11,7 @@ class MLPBuilder(ModelBuilder):
         super().__init__(df_train, model_name)
 
     def load_model(self, path: str):
-        return MultilayerPerceptronClassificationModel.load(self.model_name)
+        return MultilayerPerceptronClassificationModel.load(path)
 
     def instantiate_model(self):
         return MultilayerPerceptronClassifier(maxIter=100, stepSize=0.1, layers=[self.n_features, 2])
@@ -27,5 +27,5 @@ class MLPBuilder(ModelBuilder):
 
     def show_best_params(self):
         super().show_best_params()
-        print("StepSize:{}".format(self.model.getStepSize()))
-        print("Layers:{}".format(self.model.getLayers()))
+        print("\tStepSize:{}".format(self.model.getStepSize()))
+        print("\tLayers:{}".format(self.model.getLayers()))

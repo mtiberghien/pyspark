@@ -10,7 +10,7 @@ class SVMBuilder(ModelBuilder):
         super().__init__(df_train, model_name)
 
     def load_model(self, path: str):
-        return LinearSVCModel.load(self.model_name)
+        return LinearSVCModel.load(path)
 
     def instantiate_model(self):
         return LinearSVC(maxIter=100, regParam=0.1)
@@ -22,4 +22,4 @@ class SVMBuilder(ModelBuilder):
 
     def show_best_params(self):
         super().show_best_params()
-        print("RegParam:{}".format(self.model.getRegParam()))
+        print("\tRegParam:{}".format(self.model.getRegParam()))

@@ -10,7 +10,7 @@ class RandomForestBuilder(ModelBuilder):
         super().__init__(df_train, model_name)
 
     def load_model(self, path: str):
-        return RandomForestClassificationModel.load(self.model_name)
+        return RandomForestClassificationModel.load(path)
 
     def instantiate_model(self):
         return RandomForestClassifier(impurity='gini', numTrees=400)
@@ -23,5 +23,5 @@ class RandomForestBuilder(ModelBuilder):
 
     def show_best_params(self):
         super().show_best_params()
-        print("Impurity:{}".format(self.model.getImpurity()))
-        print("MaxDepth:{}".format(self.model.getMaxDepth()))
+        print("\tImpurity:{}".format(self.model.getImpurity()))
+        print("\tMaxDepth:{}".format(self.model.getMaxDepth()))
