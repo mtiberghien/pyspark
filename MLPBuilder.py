@@ -1,36 +1,31 @@
 from pyspark.ml.classification import MultilayerPerceptronClassifier, MultilayerPerceptronClassificationModel
-from pyspark.ml.evaluation import BinaryClassificationEvaluator
-from utils import read_training_time, write_training_time, read_models_number, write_models_number, show_best_model
-from pyspark.ml.tuning import CrossValidator, ParamGridBuilder
+from pyspark.ml.tuning import ParamGridBuilder
 from pyspark.sql import DataFrame
-from os.path import isdir
-import time
+from utils import ModelBuilder
 
 
-class MLPBuilder:
-    def __init__(self, training_df: DataFrame, n_features, model_name='MLP'):
-        self.model_name = model_name
-        if isdir(self.model_name):
-            self.model = MultilayerPerceptronClassificationModel.load(self.model_name)
-            self.training_time = read_training_time(self.model_name)
-            self.models_number = read_models_number(self.model_name)
-        else:
-            mlp = MultilayerPerceptronClassifier(maxIter=100, stepSize=0.1, layers=[30, 2])
-            param_grid = ParamGridBuilder() \
-                .addGrid(mlp.stepSize, [0.001, 0.01, 0.1]) \
-                .addGrid(mlp.layers, [[n_features, 2], [n_features, n_features*2, 2],
-                                      [n_features, n_features*2, n_features*2, 2],
-                                      [n_features, n_features*2, n_features*4, n_features, 2]]) \
-                .build()
-            cross_validation = CrossValidator(estimator=mlp,
-                                              estimatorParamMaps=param_grid,
-                                              evaluator=BinaryClassificationEvaluator(),
-                                              numFolds=3)
-            self.models_number = len(param_grid)
-            start = time.time()
-            self.model = cross_validation.fit(training_df).bestModel
-            self.training_time = time.time() - start
-            self.model.save(self.model_name)
-            write_training_time(self.model_name, self.training_time)
-            write_models_number(self.model_name, self.models_number)
-        show_best_model(self)
+# MLP model builder
+class MLPBuilder(ModelBuilder):
+    def __init__(self, df_train: DataFrame, n_features, model_name='MLP'):
+        self.n_features = n_features
+        super().__init__(df_train, model_name)
+
+    def load_model(self, path: str):
+        return MultilayerPerceptronClassificationModel.load(self.model_name)
+
+    def instantiate_model(self):
+        return MultilayerPerceptronClassifier(maxIter=100, stepSize=0.1, layers=[self.n_features, 2])
+
+    def build_param_grid(self, parent_model):
+        return ParamGridBuilder() \
+            .addGrid(parent_model.stepSize, [0.001, 0.01, 0.1]) \
+            .addGrid(parent_model.layers, [[self.n_features, 2], [self.n_features, self.n_features * 2, 2],
+                                           [self.n_features, self.n_features * 2, self.n_features * 2, 2],
+                                           [self.n_features, self.n_features * 2, self.n_features * 4, self.n_features,
+                                            2]]) \
+            .build()
+
+    def show_best_params(self):
+        super().show_best_params()
+        print("StepSize:{}".format(self.model.getStepSize()))
+        print("Layers:{}".format(self.model.getLayers()))
